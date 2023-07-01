@@ -1,0 +1,23 @@
+version: "3.5"
+
+networks:
+  design-hub-network:
+    name: design-hub-network
+
+services:
+  clickserv-postgres:
+    container_name: design-hub-container
+    environment:
+      POSTGRES_DB: design-hub-database
+      POSTGRES_USER: design-hub-user
+      POSTGRES_PASSWORD: PIh4Yrv75BLP1SuXY9XU
+    image: postgres:12.2-alpine
+    networks:
+      design-hub-network:
+        aliases:
+          - postgres.designhub
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data

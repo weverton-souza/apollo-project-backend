@@ -5,4 +5,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = "apollo-project-backend"
+rootProject.name = "design-hub-application"

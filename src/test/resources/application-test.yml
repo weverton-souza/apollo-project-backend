@@ -1,0 +1,7 @@
+spring:
+  flyway:
+    user: click-service-project-test
+    password: PIh4Yrv75BLP1SuXY9XU
+    schemas: click-service-project-test
+    url: jdbc:h2:mem:click-service-project-test
+    locations: filesystem:db/migration
