@@ -1,11 +1,4 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /v1/
-
 spring:
-  main:
-    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:postgresql://localhost:5432/design-hub-database
     password: PIh4Yrv75BLP1SuXY9XU
@@ -18,17 +11,6 @@ spring:
     driver-class-name: org.postgresql.Driver
     baseline-on-migrate: true
     locations: classpath:db/migration
-  jpa:
-    open-in-view: false
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-
-designhub:
-  global:
-    security:
-      token-expiration: 3600
-
-logging:
-  level:
-    web: DEBUG
-
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8

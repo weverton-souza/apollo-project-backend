@@ -44,9 +44,14 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.security:spring-security-core")
+
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    implementation("org.springframework.security:spring-security-jwt:1.1.1.RELEASE")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     runtimeOnly("org.postgresql:postgresql")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
