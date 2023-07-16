@@ -1,8 +1,5 @@
 package com.design.hub.configuration
 
-import jakarta.servlet.http.HttpServletRequest
-import java.util.Locale
-import java.util.Locale.LanguageRange
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,7 +10,6 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
-
 
 @Configuration
 @EnableWebSecurity
@@ -45,5 +41,4 @@ class SecurityConfiguration(
 
         logger.info("Interceptor added successfully")
     }
-
 }

@@ -10,9 +10,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.Where
 import java.time.LocalDateTime
 import java.util.UUID
-import org.hibernate.annotations.Where
 
 @Entity
 @Table(name = "\"subscription\"")
@@ -30,8 +30,6 @@ class Subscription(
     @OneToOne
     @JoinColumn(name = "plan_id")
     val plan: PlanDomain,
-
-
 
     @Column(name = "start_at", nullable = false)
     val startAt: LocalDateTime,

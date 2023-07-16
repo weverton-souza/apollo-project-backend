@@ -1,6 +1,8 @@
 package com.design.hub.service
 
 import com.design.hub.domain.AbstractEntity
+import com.design.hub.exception.ResourceNotFoundException
+import com.design.hub.utils.I18n
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,19 +37,15 @@ abstract class AbstractCrudService<T : AbstractEntity>(
         return entities
     }
 
-    override fun update(id: UUID, entity: T): T? {
+    override fun update(id: UUID, entity: T): T {
         logger.info("[update] Updating entity with ID $id")
-        val updatedEntity = if (this.repository.existsById(id)) {
+        return if (this.repository.existsById(id)) {
+            logger.info("[update] Entity updated successfully: $id")
             this.repository.save(entity)
         } else {
-            null
-        }
-        if (updatedEntity != null) {
-            logger.info("[update] Entity updated successfully: ${updatedEntity.id}")
-        } else {
             logger.info("[update] Entity not found for ID: $id")
+            throw ResourceNotFoundException(I18n.HTTP_4XX_404_NOT_FOUND)
         }
-        return updatedEntity
     }
 
     override fun delete(id: UUID): Boolean {

@@ -7,4 +7,6 @@ object I18n {
     const val HTTP_4XX_404_NOT_FOUND = "http.4xx.404-not-found"
     const val HTTP_4XX_409_CONFLICT = "http.4xx.409-conflict"
     const val HTTP_5XX_500_INTERNAL_SERVER_ERROR = "http.5xx.500-internal-server-error"
+
+    const val DESIGNHUB_VALIDATION_CONSTRAINTS_NOTBLANK_DETAILS = "designhub.validation.constraints.NotBlank.details"
 }

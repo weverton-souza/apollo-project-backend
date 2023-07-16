@@ -8,13 +8,13 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.util.UUID
 import org.hibernate.annotations.Where
+import java.util.UUID
 
 @Entity
 @Table(name = "\"product\"")
 @Where(clause = "deleted = false")
-class Product (
+class Product(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)

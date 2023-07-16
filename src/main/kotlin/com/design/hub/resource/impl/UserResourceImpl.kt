@@ -6,17 +6,17 @@ import com.design.hub.payload.user.converter.UserConverter
 import com.design.hub.payload.user.request.UserCreateRequest
 import com.design.hub.payload.user.response.UserCreateResponse
 import com.design.hub.service.UserService
+import com.design.hub.utils.I18n
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.servlet.http.HttpServletRequest
-import java.util.Optional
-import java.util.UUID
+import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -25,7 +25,10 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.Optional
+import java.util.UUID
 
+@Validated
 @RestController
 @RequestMapping("users")
 @Tag(name = "Users", description = "Resources for managing users")
@@ -40,7 +43,10 @@ class UserResourceImpl(
 
     @PostMapping
     @Operation(summary = "Create a new user")
-    fun create(@RequestBody entity: UserCreateRequest): ResponseEntity<UserCreateResponse> {
+    fun create(
+        @RequestBody @Valid
+        entity: UserCreateRequest
+    ): ResponseEntity<UserCreateResponse> {
         logger.info("[create] Creating user")
 
         val userDomain = this.userConverter.toCreateDomain(entity)
@@ -58,7 +64,7 @@ class UserResourceImpl(
         val optUser: Optional<UserDomain> = this.userService.findById(id)
         return if (optUser.isEmpty) {
             logger.info("[findById] Entity not found for ID: $id")
-            throw ResourceNotFoundException()
+            throw ResourceNotFoundException(I18n.HTTP_4XX_404_NOT_FOUND)
         } else {
             logger.info("[findById] Entity found: ${optUser.get().id}")
             ResponseEntity(this.userConverter.toResponse(optUser.get()), HttpStatus.OK)
@@ -78,13 +84,11 @@ class UserResourceImpl(
     @Operation(summary = "Update user by ID")
     fun update(@PathVariable("id") id: UUID, @RequestBody entity: UserCreateRequest): ResponseEntity<UserCreateResponse> {
         logger.info("[update] Updating entity with ID: $id")
-        val updatedEntity = this.userService.update(id, this.userConverter.toCreateDomain(entity))
-        return if (updatedEntity != null) {
-            logger.info("[update] Entity updated successfully: ${updatedEntity.id}")
-            ResponseEntity(this.userConverter.toResponse(updatedEntity), HttpStatus.OK)
-        } else {
-            logger.info("[update] Entity not found for ID: $id")
-            ResponseEntity(HttpStatus.NOT_FOUND)
+        val userDomain: UserDomain = this.userService.update(id, this.userConverter.toCreateDomain(entity))
+
+        return run {
+            logger.info("[update] Entity updated successfully: ${userDomain.id}")
+            ResponseEntity(this.userConverter.toResponse(userDomain), HttpStatus.OK)
         }
     }
 

@@ -1,9 +1,9 @@
 package com.design.hub.service
 
-import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.util.Optional
+import java.util.UUID
 
 interface DesignHubService<T> {
     fun create(entity: T): T
@@ -12,7 +12,7 @@ interface DesignHubService<T> {
 
     fun findAll(pageable: Pageable): Page<T>
 
-    fun update(id: UUID, entity: T): T?
+    fun update(id: UUID, entity: T): T
 
     fun delete(id: UUID): Boolean
 }

@@ -2,10 +2,6 @@ package com.design.hub.configuration
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.time.ZoneOffset.UTC
-import java.util.Locale
-import java.util.Objects.isNull
-import java.util.TimeZone
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,7 +10,10 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver
 import org.springframework.web.servlet.i18n.CookieLocaleResolver
 import org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
-
+import java.time.ZoneOffset.UTC
+import java.util.Locale
+import java.util.Objects.isNull
+import java.util.TimeZone
 
 @Configuration
 class InternationalizationConfiguration : AcceptHeaderLocaleResolver() {
@@ -23,7 +22,9 @@ class InternationalizationConfiguration : AcceptHeaderLocaleResolver() {
         private val LOGGER = LoggerFactory.getLogger(InternationalizationConfiguration::class.java)
         private const val ACCEPT_LANGUAGE = "Accept-Language"
         private val LOCALES: List<Locale> = listOf(
-            Locale("pt", "BR"), Locale("es", "MX"), Locale("en", "US")
+            Locale("pt", "BR"),
+            Locale("es", "MX"),
+            Locale("en", "US")
         )
     }
 

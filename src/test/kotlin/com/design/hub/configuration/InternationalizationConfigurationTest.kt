@@ -3,7 +3,6 @@ package com.design.hub.configuration
 import com.design.hub.service.impl.LocaleServiceImpl
 import com.design.hub.utils.I18n
 import jakarta.servlet.http.HttpServletRequest
-import java.util.Locale
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,6 +11,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.util.Locale
 
 @SpringBootTest
 class InternationalizationConfigurationTest {
