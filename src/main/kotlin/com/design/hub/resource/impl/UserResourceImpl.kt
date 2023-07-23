@@ -1,17 +1,24 @@
 package com.design.hub.resource.impl
 
+import com.design.hub.configuration.SecurityProperties
 import com.design.hub.domain.user.UserDomain
+import com.design.hub.exception.ExceptionDetails
 import com.design.hub.exception.ResourceNotFoundException
 import com.design.hub.payload.user.converter.UserConverter
 import com.design.hub.payload.user.request.UserCreateRequest
 import com.design.hub.payload.user.response.UserCreateResponse
+import com.design.hub.resource.UserResource
+import com.design.hub.resource.UserResource.Companion.LOGGER
 import com.design.hub.service.UserService
 import com.design.hub.utils.I18n
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -32,76 +39,91 @@ import java.util.UUID
 @RestController
 @RequestMapping("users")
 @Tag(name = "Users", description = "Resources for managing users")
+@ApiResponses(
+    value = [
+        ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionDetails::class)
+                )
+            ]
+        )
+    ]
+)
 class UserResourceImpl(
     private val userService: UserService,
-    private val userConverter: UserConverter
-) {
-
-    companion object {
-        val logger: Logger = LoggerFactory.getLogger(UserResourceImpl::class.java)
-    }
+    private val userConverter: UserConverter,
+    private val securityProperties: SecurityProperties
+) : UserResource {
 
     @PostMapping
-    @Operation(summary = "Create a new user")
-    fun create(
+    override fun create(
         @RequestBody @Valid
         entity: UserCreateRequest
     ): ResponseEntity<UserCreateResponse> {
-        logger.info("[create] Creating user")
+        LOGGER.info("TOKEN: ${this.securityProperties.tokenExpiration}")
+        LOGGER.info("[create] Creating user")
 
         val userDomain = this.userConverter.toCreateDomain(entity)
-
         val createdEntity: UserDomain = this.userService.create(userDomain)
+        LOGGER.info("[create] User created successfully: ${createdEntity.id}")
 
-        logger.info("[create] User created successfully: ${createdEntity.id}")
         return ResponseEntity(this.userConverter.toResponse(createdEntity), HttpStatus.CREATED)
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get user by ID")
-    fun findById(@PathVariable("id") id: UUID): ResponseEntity<UserCreateResponse> {
-        logger.info("[findById] Fetching entity by ID: $id")
+    override fun findById(@PathVariable("id") id: UUID): ResponseEntity<UserCreateResponse> {
+        LOGGER.info("[findById] Fetching entity by ID: $id")
+
         val optUser: Optional<UserDomain> = this.userService.findById(id)
+
         return if (optUser.isEmpty) {
-            logger.info("[findById] Entity not found for ID: $id")
+            LOGGER.info("[findById] Entity not found for ID: $id")
             throw ResourceNotFoundException(I18n.HTTP_4XX_404_NOT_FOUND)
         } else {
-            logger.info("[findById] Entity found: ${optUser.get().id}")
+            LOGGER.info("[findById] Entity found: ${optUser.get().id}")
             ResponseEntity(this.userConverter.toResponse(optUser.get()), HttpStatus.OK)
         }
     }
 
     @GetMapping
     @Operation(summary = "Get all users")
-    fun findAll(pageable: Pageable): ResponseEntity<Page<UserCreateResponse>> {
-        logger.info("[findAll] Fetching all entities")
+    override fun findAll(@ParameterObject pageable: Pageable): ResponseEntity<Page<UserCreateResponse>> {
+        LOGGER.info("[findAll] Fetching all entities")
+
         val entities = this.userService.findAll(pageable).map { this.userConverter.toResponse(it) }
-        logger.info("[findAll] Total entities found: ${entities.size}")
+        LOGGER.info("[findAll] Total entities found: ${entities.size}")
+
         return ResponseEntity(entities, HttpStatus.OK)
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update user by ID")
-    fun update(@PathVariable("id") id: UUID, @RequestBody entity: UserCreateRequest): ResponseEntity<UserCreateResponse> {
-        logger.info("[update] Updating entity with ID: $id")
+    override fun update(
+        @PathVariable("id") id: UUID,
+        @RequestBody entity: UserCreateRequest
+    ): ResponseEntity<UserCreateResponse> {
+        LOGGER.info("[update] Updating entity with ID: $id")
         val userDomain: UserDomain = this.userService.update(id, this.userConverter.toCreateDomain(entity))
 
         return run {
-            logger.info("[update] Entity updated successfully: ${userDomain.id}")
+            LOGGER.info("[update] Entity updated successfully: ${userDomain.id}")
             ResponseEntity(this.userConverter.toResponse(userDomain), HttpStatus.OK)
         }
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete user by ID")
-    fun delete(@PathVariable("id") id: UUID): ResponseEntity<Unit> {
-        logger.info("[delete] Deleting entity with ID: $id")
+    override fun delete(@PathVariable("id") id: UUID): ResponseEntity<Unit> {
+        LOGGER.info("[delete] Deleting entity with ID: $id")
+
         val isDeleted = this.userService.delete(id)
         return if (isDeleted) {
-            logger.info("[delete] Entity deleted successfully with ID: $id")
+            LOGGER.info("[delete] Entity deleted successfully with ID: $id")
             ResponseEntity(HttpStatus.NO_CONTENT)
         } else {
-            logger.info("[delete] Entity not found for ID: $id")
+            LOGGER.info("[delete] Entity not found for ID: $id")
             ResponseEntity(HttpStatus.NOT_FOUND)
         }
     }

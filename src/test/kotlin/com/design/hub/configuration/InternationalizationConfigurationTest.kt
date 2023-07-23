@@ -27,29 +27,30 @@ class InternationalizationConfigurationTest {
 
     @BeforeEach
     fun setup() {
+        Locale.setDefault(Locale("en", "US"))
         MockitoAnnotations.openMocks(this)
     }
 
     @Test
     fun `should get locale default`() {
-        `when`(request!!.getHeader("Accept-Language")).thenReturn("pt-BR")
+        `when`(request!!.getHeader("Accept-Language")).thenReturn(null)
         val result: Locale = resolver.resolveLocale(request)
 
         val message = this.localeServiceImpl.invoke(I18n.HTTP_4XX_404_NOT_FOUND, request)
 
         assertEquals(Locale.getDefault(), result)
-        assertEquals("Recurso não encontrado", message)
+        assertEquals("Resource not found", message)
     }
 
     @Test
     fun `should get en-US as locale`() {
-        `when`(request!!.getHeader("Accept-Language")).thenReturn("en-US")
+        `when`(request!!.getHeader("Accept-Language")).thenReturn("pt-BR")
         val result: Locale = resolver.resolveLocale(request)
 
         val message = this.localeServiceImpl.invoke(I18n.HTTP_4XX_404_NOT_FOUND, request)
 
-        assertEquals(Locale("en", "US"), result)
-        assertEquals("Resource not found", message)
+        assertEquals(Locale("pt", "BR"), result)
+        assertEquals("Recurso não encontrado", message)
     }
 
     @Test

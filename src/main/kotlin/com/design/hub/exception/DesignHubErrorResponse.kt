@@ -1,5 +1,9 @@
 package com.design.hub.exception
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Schema
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -11,6 +15,8 @@ data class DesignHubErrorResponse(
     override val details: String,
     override val developerMessage: String,
     override val timestamp: LocalDateTime,
+    @JsonInclude(Include.NON_NULL, content = Include.NON_EMPTY)
+    @ArraySchema(schema = Schema(implementation = MethodArgumentNotValidDetails::class))
     val fieldErrors: MutableCollection<MethodArgumentNotValidDetails>? = null
 ) : ExceptionDetails {
 
@@ -45,11 +51,6 @@ data class DesignHubErrorResponse(
 
         fun developerMessage(developerMessage: String): Builder {
             this.developerMessage = developerMessage
-            return this
-        }
-
-        fun timestamp(timestamp: LocalDateTime): Builder {
-            this.timestamp = timestamp
             return this
         }
 

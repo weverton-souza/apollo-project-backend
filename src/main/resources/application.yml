@@ -2,3 +2,16 @@ spring:
   messages:
     basename: i18n/messages
     encoding: UTF-8
+  web:
+    locale: en_US
+    locale-resolver: fixed
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+  writer-with-order-by-keys: true
+
+design-hub:
+  global:
+    security:
+      token-expiration: 3600

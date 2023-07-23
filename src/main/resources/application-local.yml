@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /v1/
+    context-path: /design-hub/v1/
 
 spring:
   main:
@@ -23,12 +23,12 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
-designhub:
-  global:
-    security:
-      token-expiration: 3600
+application:
+  design-hub:
+    global:
+      security:
+        token-expiration: 3600
 
 logging:
   level:
     web: DEBUG
-

@@ -50,7 +50,8 @@ class ExceptionControllerAdvice(
     ): ResponseEntity<ExceptionDetails> {
         return DesignHubErrorResponse
             .builder()
-            .details(ex.message)
+            .details(this.localeService.invoke(ex.message!!, request))
+            .developerMessage(ex.javaClass.name)
             .status(HttpStatus.NOT_FOUND)
             .build()
     }

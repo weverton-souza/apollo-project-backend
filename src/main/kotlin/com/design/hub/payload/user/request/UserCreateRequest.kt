@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size
 @Schema(description = "Request object for creating a user")
 data class UserCreateRequest(
 
-    @field:Size(max = 1)
+    @field:Size(max = 50)
     @field:NotBlank(message = "designhub.validation.constraints.NotBlank.field.message")
     @field:Schema(description = "User name", maxLength = 100, example = "John Doe", required = true)
     val name: String?,
