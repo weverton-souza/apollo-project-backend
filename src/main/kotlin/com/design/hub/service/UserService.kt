@@ -1,5 +1,5 @@
 package com.design.hub.service
 
-import com.design.hub.domain.user.UserDomain
+import com.design.hub.domain.user.User
 
-interface UserService : DesignHubService<UserDomain>
+interface UserService : DesignHubService<User>

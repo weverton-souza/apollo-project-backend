@@ -1,6 +1,6 @@
 package com.design.hub.domain
 
-import com.design.hub.domain.user.UserDomain
+import com.design.hub.domain.user.User
 import jakarta.persistence.Column
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
@@ -22,7 +22,7 @@ abstract class AbstractEntity(
 
     @CreatedBy
     @Column(name = "created_by", nullable = false, updatable = false)
-    val createdBy: UserDomain? = null,
+    val createdBy: User? = null,
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -30,7 +30,7 @@ abstract class AbstractEntity(
 
     @LastModifiedBy
     @Column(name = "update_by", nullable = false)
-    val updatedBy: UserDomain? = null,
+    val updatedBy: User? = null,
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)

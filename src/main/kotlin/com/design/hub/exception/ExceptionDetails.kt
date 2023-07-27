@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
-@Schema(description = "Custom error response for DesignHub errors")
+@Schema(description = "Custom error response for DesignHub errors", hidden = true)
 interface ExceptionDetails {
     @get:Schema(description = "HTTP status of the error response", example = "ERROR")
     val status: HttpStatus

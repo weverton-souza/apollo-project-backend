@@ -1,8 +1,9 @@
 package com.design.hub.resource.impl
 
+import com.design.hub.annotation.IsBackoffice
+import com.design.hub.annotation.IsCustomer
 import com.design.hub.configuration.SecurityProperties
-import com.design.hub.domain.user.UserDomain
-import com.design.hub.exception.ExceptionDetails
+import com.design.hub.domain.user.User
 import com.design.hub.exception.ResourceNotFoundException
 import com.design.hub.payload.user.converter.UserConverter
 import com.design.hub.payload.user.request.UserCreateRequest
@@ -12,11 +13,6 @@ import com.design.hub.resource.UserResource.Companion.LOGGER
 import com.design.hub.service.UserService
 import com.design.hub.utils.I18n
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
-import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springdoc.core.annotations.ParameterObject
 import org.springframework.data.domain.Page
@@ -38,21 +34,6 @@ import java.util.UUID
 @Validated
 @RestController
 @RequestMapping("users")
-@Tag(name = "Users", description = "Resources for managing users")
-@ApiResponses(
-    value = [
-        ApiResponse(
-            responseCode = "500",
-            description = "Internal Server Error",
-            content = [
-                Content(
-                    mediaType = "application/json",
-                    schema = Schema(implementation = ExceptionDetails::class)
-                )
-            ]
-        )
-    ]
-)
 class UserResourceImpl(
     private val userService: UserService,
     private val userConverter: UserConverter,
@@ -68,17 +49,18 @@ class UserResourceImpl(
         LOGGER.info("[create] Creating user")
 
         val userDomain = this.userConverter.toCreateDomain(entity)
-        val createdEntity: UserDomain = this.userService.create(userDomain)
+        val createdEntity: User = this.userService.create(userDomain)
         LOGGER.info("[create] User created successfully: ${createdEntity.id}")
 
         return ResponseEntity(this.userConverter.toResponse(createdEntity), HttpStatus.CREATED)
     }
 
+    @IsCustomer
     @GetMapping("/{id}")
     override fun findById(@PathVariable("id") id: UUID): ResponseEntity<UserCreateResponse> {
         LOGGER.info("[findById] Fetching entity by ID: $id")
 
-        val optUser: Optional<UserDomain> = this.userService.findById(id)
+        val optUser: Optional<User> = this.userService.findById(id)
 
         return if (optUser.isEmpty) {
             LOGGER.info("[findById] Entity not found for ID: $id")
@@ -89,6 +71,7 @@ class UserResourceImpl(
         }
     }
 
+    @IsBackoffice
     @GetMapping
     @Operation(summary = "Get all users")
     override fun findAll(@ParameterObject pageable: Pageable): ResponseEntity<Page<UserCreateResponse>> {
@@ -106,11 +89,11 @@ class UserResourceImpl(
         @RequestBody entity: UserCreateRequest
     ): ResponseEntity<UserCreateResponse> {
         LOGGER.info("[update] Updating entity with ID: $id")
-        val userDomain: UserDomain = this.userService.update(id, this.userConverter.toCreateDomain(entity))
+        val user: User = this.userService.update(id, this.userConverter.toCreateDomain(entity))
 
         return run {
-            LOGGER.info("[update] Entity updated successfully: ${userDomain.id}")
-            ResponseEntity(this.userConverter.toResponse(userDomain), HttpStatus.OK)
+            LOGGER.info("[update] Entity updated successfully: ${user.id}")
+            ResponseEntity(this.userConverter.toResponse(user), HttpStatus.OK)
         }
     }
 

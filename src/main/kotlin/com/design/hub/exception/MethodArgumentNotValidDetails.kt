@@ -2,7 +2,7 @@ package com.design.hub.exception
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-@Schema(description = "Field validation error details")
+@Schema(description = "Field validation error details", hidden = true)
 data class MethodArgumentNotValidDetails(
 
     @Schema(description = "Name of the field with the error", example = "email")

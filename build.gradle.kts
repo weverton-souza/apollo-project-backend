@@ -45,6 +45,9 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.security:spring-security-core")
+    implementation("org.springframework.boot:spring-boot-starter-log4j2")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
 
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("org.springframework.security:spring-security-jwt:1.1.1.RELEASE")
@@ -53,7 +56,10 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.apache.logging.log4j:log4j-layout-template-json:3.0.0-alpha1")
 
     implementation("org.springdoc:springdoc-openapi-ui:1.7.0")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
@@ -73,6 +79,7 @@ dependencyManagement {
 }
 
 tasks.withType<KotlinCompile> {
+    dependsOn(tasks.ktlintFormat)
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict -proc:none"
         jvmTarget = "17"
@@ -99,4 +106,8 @@ tasks {
         inputs.dir(snippetsDir)
         dependsOn(test)
     }
+}
+
+configurations.all {
+    exclude(mapOf("module" to "spring-boot-starter-logging"))
 }

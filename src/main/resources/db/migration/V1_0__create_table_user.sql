@@ -5,7 +5,7 @@ CREATE TABLE "user"
     id         UUID      DEFAULT uuid_generate_v4() PRIMARY KEY,
     name       VARCHAR(100)       NOT NULL,
     email      VARCHAR(50) UNIQUE NOT NULL,
-    password   CHAR(64)           NOT NULL,
+    password   VARCHAR(255)       NOT NULL,
     type       VARCHAR(20)        NOT NULL,
     status     VARCHAR(20)        NOT NULL,
     verified   BOOLEAN   DEFAULT FALSE,

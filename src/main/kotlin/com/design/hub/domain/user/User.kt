@@ -19,7 +19,7 @@ import java.util.UUID
 @Entity
 @Table(name = "\"user\"")
 @Where(clause = "deleted = false")
-data class UserDomain(
+data class User(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
@@ -31,7 +31,7 @@ data class UserDomain(
     @Column(name = "email", nullable = false, unique = true, length = 50)
     val email: String,
 
-    @Column(name = "password", nullable = false, length = 64)
+    @Column(name = "password", nullable = false, length = 255)
     private val password: String,
 
     @Enumerated(EnumType.STRING)
@@ -48,7 +48,7 @@ data class UserDomain(
 ) : AbstractEntity(), UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
-        mutableListOf(SimpleGrantedAuthority(type.name))
+        mutableListOf(SimpleGrantedAuthority("ROLE_" + type.name))
 
     override fun getPassword(): String = this.password
 

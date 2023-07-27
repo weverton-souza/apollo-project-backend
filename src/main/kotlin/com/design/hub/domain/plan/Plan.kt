@@ -12,7 +12,7 @@ import java.util.UUID
 @Entity
 @Table(name = "\"plan\"")
 @Where(clause = "deleted = false")
-class PlanDomain(
+class Plan(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)

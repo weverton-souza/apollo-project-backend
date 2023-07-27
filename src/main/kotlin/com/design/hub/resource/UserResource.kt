@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,6 +26,21 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import java.util.UUID
 
+@Tag(name = "Users", description = "Resources for managing users")
+@ApiResponses(
+    value = [
+        ApiResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content = [
+                Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = ExceptionDetails::class)
+                )
+            ]
+        )
+    ]
+)
 interface UserResource {
 
     companion object {
@@ -54,7 +70,7 @@ interface UserResource {
             )
         ]
     )
-    @Operation(summary = "Create a new user")
+    @Operation(summary = "Create a new user", hidden = true)
     fun create(
         @RequestBody @Valid
         entity: UserCreateRequest

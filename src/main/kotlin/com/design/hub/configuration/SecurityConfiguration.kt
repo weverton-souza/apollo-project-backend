@@ -1,44 +1,84 @@
 package com.design.hub.configuration
 
-import org.slf4j.LoggerFactory
+import com.design.hub.security.JwtAuthenticationFilter
+import com.design.hub.service.SecurityService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.AuthenticationProvider
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer
+import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 class SecurityConfiguration(
-    private val localeChangeInterceptor: LocaleChangeInterceptor
+    private val securityService: SecurityService,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ) : WebMvcConfigurer {
 
-    companion object {
-        private val logger = LoggerFactory.getLogger(SecurityConfiguration::class.java)
-    }
-
     @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        http.authorizeHttpRequests()
-            .anyRequest()
-            .permitAll()
-            .and()
-            .csrf()
-            .disable()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+    @Throws(Exception::class)
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http.csrf { obj: CsrfConfigurer<HttpSecurity> ->
+            obj.disable()
+        }
+            .authorizeHttpRequests { request ->
+                request.requestMatchers(
+                    "/signin/**",
+                    "/signup/**",
+                    "/design-hub/v1/auth/**",
+                    "/v2/api-docs",
+                    "/v3/api-docs",
+                    "/v3/api-docs/**",
+                    "/swagger-resources",
+                    "/swagger-resources/**",
+                    "/configuration/ui",
+                    "/configuration/security",
+                    "/swagger-ui/**",
+                    "/webjars/**",
+                    "/swagger-ui.html"
+                )
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated()
+            }.sessionManagement { manager: SessionManagementConfigurer<HttpSecurity> ->
+                manager.sessionCreationPolicy(STATELESS)
+            }.authenticationProvider(authenticationProvider()).addFilterBefore(
+                this.jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter::class.java
+            )
 
         return http.build()
     }
 
-    override fun addInterceptors(interceptorRegistry: InterceptorRegistry) {
-        logger.info("Adding localeChangeInterceptor interceptor")
-        interceptorRegistry.addInterceptor(this.localeChangeInterceptor)
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
+    }
 
-        logger.info("Interceptor added successfully")
+    @Bean
+    fun authenticationProvider(): AuthenticationProvider {
+        val authProvider = DaoAuthenticationProvider()
+        authProvider.setUserDetailsService(this.securityService)
+        authProvider.setPasswordEncoder(passwordEncoder())
+        return authProvider
+    }
+
+    @Bean
+    @Throws(java.lang.Exception::class)
+    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
+        return config.authenticationManager
     }
 }
