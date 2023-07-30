@@ -12,30 +12,37 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.Where
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Entity
-@Table(name = "\"token\"")
+@Table(name = "\"access_token\"")
 @Where(clause = "deleted = false")
-data class Token(
+data class AccessToken(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID? = null,
+    override val id: UUID = UUID.randomUUID(),
 
     @Column(unique = true)
     val token: String,
 
     @Enumerated(EnumType.STRING)
-    var tokenType: TokenType = TokenType.BEARER,
+    val tokenType: TokenType = TokenType.BEARER,
 
-    var revoked: Boolean = false,
+    val revoked: Boolean = false,
 
-    var expired: Boolean = false,
+    val expired: Boolean = false,
+
+    val expiredAt: LocalDateTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    var user: User
+    var user: User,
+
+    @OneToMany(mappedBy = "refreshTokenKey.accessToken")
+    val refreshTokens: List<RefreshToken> = mutableListOf()
 ) : AbstractEntity()

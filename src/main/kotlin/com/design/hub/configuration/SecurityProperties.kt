@@ -5,5 +5,7 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding
 
 @ConfigurationProperties(prefix = "application.design-hub.global.security")
 data class SecurityProperties @ConstructorBinding constructor(
-    val tokenExpiration: String
+    val tokenExpiration: Long,
+    val refreshTokenExpiration: Long,
+    val jwtSigningKey: String
 )

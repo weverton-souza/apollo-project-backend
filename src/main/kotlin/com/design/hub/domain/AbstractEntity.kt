@@ -15,7 +15,7 @@ abstract class AbstractEntity(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    open val id: UUID? = null,
+    open val id: UUID = UUID.randomUUID(),
 
     @Column(name = "deleted", nullable = false)
     val deleted: Boolean = false,

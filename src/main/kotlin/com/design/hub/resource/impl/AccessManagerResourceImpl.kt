@@ -1,8 +1,9 @@
 package com.design.hub.resource.impl
 
-import com.design.hub.payload.user.request.SigninRequest
+import com.design.hub.payload.security.request.RefreshTokenRequest
+import com.design.hub.payload.security.request.SigninRequest
+import com.design.hub.payload.security.response.JwtAuthenticationResponse
 import com.design.hub.payload.user.request.UserCreateRequest
-import com.design.hub.payload.user.response.JwtAuthenticationResponse
 import com.design.hub.resource.AccessManagerResource
 import com.design.hub.service.AccessManagementService
 import jakarta.validation.Valid
@@ -26,27 +27,37 @@ class AccessManagerResourceImpl(
     }
 
     @PostMapping("/signup")
-    override fun signup(
+    override fun signUp(
         @RequestBody @Valid
         request: UserCreateRequest
     ): JwtAuthenticationResponse {
-        LOGGER.info("[signup] Attempting to sign up user")
+        LOGGER.info("[signUp] Attempting to sign up user")
 
         val jwtResponse: JwtAuthenticationResponse = this.accessManagementService.signUp(request)
-        LOGGER.info("[signup] User signed up successfully")
+        LOGGER.info("[signUp] User signed up successfully")
 
         return jwtResponse
     }
 
     @PostMapping("/signin")
-    override fun signin(
+    override fun signIn(
         @RequestBody @Valid
         request: SigninRequest
     ): JwtAuthenticationResponse {
-        LOGGER.info("[signin] Attempting to sign in user")
+        LOGGER.info("[signIn] Attempting to sign in user")
 
         val jwtResponse: JwtAuthenticationResponse = this.accessManagementService.signIn(request)
-        LOGGER.info("[signin] User signed in successfully")
+        LOGGER.info("[signIn] User signed in successfully")
+
+        return jwtResponse
+    }
+
+    @PostMapping("/refresh-token")
+    override fun refreshToken(request: RefreshTokenRequest): JwtAuthenticationResponse {
+        LOGGER.info("[refreshToken] Attempting to refresh token")
+
+        val jwtResponse: JwtAuthenticationResponse = this.accessManagementService.refreshToken(request)
+        LOGGER.info("[refreshToken] Token refreshed successfully")
 
         return jwtResponse
     }

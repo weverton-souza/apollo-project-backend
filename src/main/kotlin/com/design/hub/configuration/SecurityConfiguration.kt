@@ -36,6 +36,7 @@ class SecurityConfiguration(
         }
             .authorizeHttpRequests { request ->
                 request.requestMatchers(
+                    "/refresh-token/**",
                     "/signin/**",
                     "/signup/**",
                     "/design-hub/v1/auth/**",

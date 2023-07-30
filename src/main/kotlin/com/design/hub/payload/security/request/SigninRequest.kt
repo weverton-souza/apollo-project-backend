@@ -1,4 +1,4 @@
-package com.design.hub.payload.user.request
+package com.design.hub.payload.security.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 

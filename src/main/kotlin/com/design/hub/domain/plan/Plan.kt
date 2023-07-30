@@ -16,7 +16,7 @@ class Plan(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID? = null,
+    override val id: UUID = UUID.randomUUID(),
 
     @Column(name = "name", nullable = false, length = 10)
     val name: String,

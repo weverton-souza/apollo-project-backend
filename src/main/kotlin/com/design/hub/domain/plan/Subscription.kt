@@ -21,7 +21,7 @@ class Subscription(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID? = null,
+    override val id: UUID = UUID.randomUUID(),
 
     @ManyToOne
     @JoinColumn(name = "user_id")

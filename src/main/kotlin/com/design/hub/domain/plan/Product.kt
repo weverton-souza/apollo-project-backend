@@ -18,7 +18,7 @@ class Product(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID? = null,
+    override val id: UUID = UUID.randomUUID(),
 
     @Column(name = "name", updatable = false)
     val name: String,

@@ -23,7 +23,7 @@ data class User(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID? = null,
+    override val id: UUID = UUID.randomUUID(),
 
     @Column(name = "name", nullable = false, length = 100)
     val name: String,
@@ -49,6 +49,8 @@ data class User(
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
         mutableListOf(SimpleGrantedAuthority("ROLE_" + type.name))
+
+    fun authoritiesAsStringList(): MutableList<String> = mutableListOf("ROLE_" + type.name)
 
     override fun getPassword(): String = this.password
 

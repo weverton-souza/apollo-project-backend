@@ -1,9 +1,10 @@
 package com.design.hub.resource
 
 import com.design.hub.exception.ExceptionDetails
-import com.design.hub.payload.user.request.SigninRequest
+import com.design.hub.payload.security.request.RefreshTokenRequest
+import com.design.hub.payload.security.request.SigninRequest
+import com.design.hub.payload.security.response.JwtAuthenticationResponse
 import com.design.hub.payload.user.request.UserCreateRequest
-import com.design.hub.payload.user.response.JwtAuthenticationResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -54,7 +55,7 @@ interface AccessManagerResource {
         ]
     )
     @Operation(summary = "Sign up a new user")
-    fun signup(
+    fun signUp(
         @Valid @RequestBody
         request: UserCreateRequest
     ): JwtAuthenticationResponse
@@ -83,8 +84,14 @@ interface AccessManagerResource {
         ]
     )
     @Operation(summary = "Sign in a user")
-    fun signin(
+    fun signIn(
         @Valid @RequestBody
         request: SigninRequest
+    ): JwtAuthenticationResponse
+
+    @Operation(summary = "Refresh token of a user")
+    fun refreshToken(
+        @Valid @RequestBody
+        request: RefreshTokenRequest
     ): JwtAuthenticationResponse
 }
