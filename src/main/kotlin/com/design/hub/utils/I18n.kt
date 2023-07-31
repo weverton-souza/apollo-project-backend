@@ -8,6 +8,8 @@ object I18n {
     const val HTTP_4XX_409_CONFLICT = "http.4xx.409-conflict"
     const val HTTP_5XX_500_INTERNAL_SERVER_ERROR = "http.5xx.500-internal-server-error"
 
+    const val REFRESH_TOKEN_NOT_FOUND_MESSAGE = "http.4xx.404-refresh-token-not-found.message"
+
     const val DESIGNHUB_VALIDATION_CONSTRAINTS_NOTBLANK_DETAILS = "designhub.validation.constraints.NotBlank.details"
     const val DESIGNHUB_VALIDATION_CONSTRAINTS_NOTBLANK_ENUM_DETAILS = "designhub.validation.constraints.NotBlank.enum.message"
 }

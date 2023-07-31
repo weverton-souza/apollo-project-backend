@@ -4,6 +4,7 @@ import com.design.hub.configuration.SecurityProperties
 import com.design.hub.domain.user.User
 import com.design.hub.enumeration.AccountStatus
 import com.design.hub.enumeration.UserType
+import com.design.hub.exception.ResourceNotFoundException
 import com.design.hub.payload.security.request.RefreshTokenRequest
 import com.design.hub.payload.security.request.SigninRequest
 import com.design.hub.payload.security.response.JwtAuthenticationResponse
@@ -13,6 +14,7 @@ import com.design.hub.repository.RefreshTokenRepository
 import com.design.hub.repository.UserRepository
 import com.design.hub.service.AccessManagementService
 import com.design.hub.service.SecurityService
+import com.design.hub.utils.I18n
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.AuthenticationManager
@@ -62,7 +64,7 @@ class AccessManagerServiceImpl(
         val user = userRepository.findByEmail(request.email)
             .orElseThrow {
                 LOGGER.error("[signIn] Invalid email or password for email: ${request.email}")
-                IllegalArgumentException("Invalid email or password")
+                ResourceNotFoundException(I18n.REFRESH_TOKEN_NOT_FOUND_MESSAGE)
             }
 
         val accessToken: String = securityService.generateToken(user)
@@ -76,14 +78,14 @@ class AccessManagerServiceImpl(
 
         val refreshToken = this.refreshTokenRepository.findByToken(request.refreshToken)
             .orElseThrow {
-                IllegalArgumentException("Refresh token not found")
+                ResourceNotFoundException(I18n.REFRESH_TOKEN_NOT_FOUND_MESSAGE)
             }
 
         val user = refreshToken.refreshTokenKey.accessToken.user
 
         if (refreshToken.expiresAt.isBefore(LocalDateTime.now())) {
             LOGGER.error("[refreshToken] Refresh token expired for user with email: ${request.refreshToken}")
-            throw IllegalArgumentException("Refresh token expired")
+            throw ResourceNotFoundException(I18n.REFRESH_TOKEN_NOT_FOUND_MESSAGE)
         }
 
         val accessToken: String = this.securityService.generateToken(user)
@@ -97,7 +99,7 @@ class AccessManagerServiceImpl(
 
         val refreshToken = this.refreshTokenRepository.findByToken(request.refreshToken)
             .orElseThrow {
-                IllegalArgumentException("Refresh token not found")
+                ResourceNotFoundException(I18n.REFRESH_TOKEN_NOT_FOUND_MESSAGE)
             }
 
         refreshToken.revoked = true
@@ -108,7 +110,7 @@ class AccessManagerServiceImpl(
     private fun buildJwtAuthenticationResponse(accessToken: String, user: User): JwtAuthenticationResponse {
         val refreshToken = this.refreshTokenRepository.findByRefreshTokenKeyAccessTokenToken(accessToken)
             .orElseThrow {
-                IllegalArgumentException("Refresh token not found")
+                ResourceNotFoundException(I18n.REFRESH_TOKEN_NOT_FOUND_MESSAGE)
             }
 
         LOGGER.info("[buildJwtAuthenticationResponse] Token generated successfully for user with email: ${user.email}")
