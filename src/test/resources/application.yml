@@ -22,4 +22,6 @@ application:
   design-hub:
     global:
       security:
-        token-expiration: 3600
+        token-expiration: 3600  # 1 hour
+        refresh-token-expiration: 86400 # 24 hours
+        jwt-signing-key: 5Kg6WrL1NsY2ToH4QjXzBa9Dc3Fv7Mu8IpORmSeVtZnCp0yJlUi
