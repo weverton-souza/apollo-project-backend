@@ -5,6 +5,7 @@ import com.design.hub.utils.I18n
 import jakarta.servlet.http.HttpServletRequest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.util.Locale
 
 @SpringBootTest
+@DisplayName("Internationalization Configuration Tests")
 class InternationalizationConfigurationTest {
 
     @Autowired
@@ -32,7 +34,7 @@ class InternationalizationConfigurationTest {
     }
 
     @Test
-    fun `should get locale default`() {
+    fun `it should get locale default`() {
         `when`(request!!.getHeader("Accept-Language")).thenReturn(null)
         val result: Locale = resolver.resolveLocale(request)
 
@@ -43,7 +45,7 @@ class InternationalizationConfigurationTest {
     }
 
     @Test
-    fun `should get en-US as locale`() {
+    fun `it should get en-US as locale`() {
         `when`(request!!.getHeader("Accept-Language")).thenReturn("pt-BR")
         val result: Locale = resolver.resolveLocale(request)
 
@@ -54,7 +56,7 @@ class InternationalizationConfigurationTest {
     }
 
     @Test
-    fun `should get es-MX as locale`() {
+    fun `it should get es-MX as locale`() {
         `when`(request!!.getHeader("Accept-Language")).thenReturn("es-MX")
         val result: Locale = resolver.resolveLocale(request)
 

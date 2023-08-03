@@ -22,7 +22,7 @@ class ProductDetail(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID = UUID.randomUUID(),
+    override var id: UUID = UUID.randomUUID(),
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

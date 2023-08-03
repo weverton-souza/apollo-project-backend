@@ -110,6 +110,7 @@ class AccessManagerServiceImpl(
     private fun buildJwtAuthenticationResponse(accessToken: String, user: User): JwtAuthenticationResponse {
         val refreshToken = this.refreshTokenRepository.findByRefreshTokenKeyAccessTokenToken(accessToken)
             .orElseThrow {
+                LOGGER.error("[buildJwtAuthenticationResponse] Refresh token not found for user with email: ${user.email}")
                 ResourceNotFoundException(I18n.REFRESH_TOKEN_NOT_FOUND_MESSAGE)
             }
 

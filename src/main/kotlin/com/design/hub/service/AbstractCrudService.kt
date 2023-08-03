@@ -34,7 +34,7 @@ abstract class AbstractCrudService<T : AbstractEntity>(
     override fun findAll(pageable: Pageable): Page<T> {
         LOGGER.info("[findAll] Fetching all entities")
         val entities = this.repository.findAll(pageable)
-        LOGGER.info("[findAll] Total entities found: ${entities.size}")
+        LOGGER.info("[findAll] Total entities found: ${entities.content.size}")
         return entities
     }
 
@@ -42,6 +42,7 @@ abstract class AbstractCrudService<T : AbstractEntity>(
         LOGGER.info("[update] Updating entity with ID $id")
         return if (this.repository.existsById(id)) {
             LOGGER.info("[update] Entity updated successfully: $id")
+            entity.id = id
             this.repository.save(entity)
         } else {
             LOGGER.info("[update] Entity not found for ID: $id")

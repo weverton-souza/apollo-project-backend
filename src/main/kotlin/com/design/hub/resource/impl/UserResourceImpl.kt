@@ -1,8 +1,8 @@
 package com.design.hub.resource.impl
 
+import com.design.hub.annotation.IsAdmin
 import com.design.hub.annotation.IsBackoffice
 import com.design.hub.annotation.IsCustomer
-import com.design.hub.configuration.SecurityProperties
 import com.design.hub.domain.user.User
 import com.design.hub.exception.ResourceNotFoundException
 import com.design.hub.payload.user.converter.UserConverter
@@ -31,13 +31,13 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.Optional
 import java.util.UUID
 
+@IsAdmin
 @Validated
 @RestController
 @RequestMapping("users")
 class UserResourceImpl(
     private val userService: UserService,
-    private val userConverter: UserConverter,
-    private val securityProperties: SecurityProperties
+    private val userConverter: UserConverter
 ) : UserResource {
 
     @PostMapping
@@ -45,7 +45,6 @@ class UserResourceImpl(
         @RequestBody @Valid
         entity: UserCreateRequest
     ): ResponseEntity<UserCreateResponse> {
-        LOGGER.info("TOKEN: ${this.securityProperties.tokenExpiration}")
         LOGGER.info("[create] Creating user")
 
         val userDomain = this.userConverter.toCreateDomain(entity)
@@ -78,7 +77,7 @@ class UserResourceImpl(
         LOGGER.info("[findAll] Fetching all entities")
 
         val entities = this.userService.findAll(pageable).map { this.userConverter.toResponse(it) }
-        LOGGER.info("[findAll] Total entities found: ${entities.size}")
+        LOGGER.info("[findAll] Total entities found: ${entities.content.size}")
 
         return ResponseEntity(entities, HttpStatus.OK)
     }
@@ -107,7 +106,7 @@ class UserResourceImpl(
             ResponseEntity(HttpStatus.NO_CONTENT)
         } else {
             LOGGER.info("[delete] Entity not found for ID: $id")
-            ResponseEntity(HttpStatus.NOT_FOUND)
+            throw ResourceNotFoundException(I18n.HTTP_4XX_404_NOT_FOUND)
         }
     }
 }

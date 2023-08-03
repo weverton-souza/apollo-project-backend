@@ -4,6 +4,7 @@ import com.design.hub.configuration.SecurityProperties
 import com.design.hub.domain.security.AccessToken
 import com.design.hub.domain.security.RefreshToken
 import com.design.hub.domain.security.RefreshTokenKey
+import com.design.hub.exception.ResourceNotFoundException
 import com.design.hub.repository.AccessTokenRepository
 import com.design.hub.repository.RefreshTokenRepository
 import com.design.hub.repository.UserRepository
@@ -14,6 +15,8 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -32,6 +35,10 @@ class SecurityServiceImpl(
     private val accessTokenRepository: AccessTokenRepository,
     private val refreshTokenRepository: RefreshTokenRepository
 ) : SecurityService, UserDetailsService {
+
+    companion object {
+        val LOGGER: Logger = LoggerFactory.getLogger(SecurityServiceImpl::class.java)
+    }
 
     override fun extractUserName(token: String): String = extractClaim<String>(token, Claims::getSubject)
 
@@ -54,7 +61,8 @@ class SecurityServiceImpl(
 
         val user = userRepository.findByEmail(userDetails.username)
             .orElseThrow {
-                UsernameNotFoundException(I18n.HTTP_4XX_404_NOT_FOUND)
+                LOGGER.error("[generateToken] User not found")
+                ResourceNotFoundException(I18n.HTTP_4XX_404_NOT_FOUND)
             }
 
         val accessTokenSaved: AccessToken = this.accessTokenRepository.save(

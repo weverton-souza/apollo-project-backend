@@ -2,7 +2,6 @@ package com.design.hub.domain
 
 import com.design.hub.domain.user.User
 import jakarta.persistence.Column
-import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
@@ -13,9 +12,8 @@ import java.util.UUID
 
 abstract class AbstractEntity(
     @Id
-    @GeneratedValue
     @Column(name = "id", updatable = false)
-    open val id: UUID = UUID.randomUUID(),
+    open var id: UUID = UUID.randomUUID(),
 
     @Column(name = "deleted", nullable = false)
     val deleted: Boolean = false,

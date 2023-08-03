@@ -7,7 +7,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.annotations.Where
@@ -21,9 +20,8 @@ import java.util.UUID
 @Where(clause = "deleted = false")
 data class User(
     @Id
-    @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID = UUID.randomUUID(),
+    override var id: UUID = UUID.randomUUID(),
 
     @Column(name = "name", nullable = false, length = 100)
     val name: String,
@@ -45,7 +43,7 @@ data class User(
     @Column(name = "verified", nullable = false)
     val verified: Boolean = false
 
-) : AbstractEntity(), UserDetails {
+) : AbstractEntity(id = id), UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
         mutableListOf(SimpleGrantedAuthority("ROLE_" + type.name))

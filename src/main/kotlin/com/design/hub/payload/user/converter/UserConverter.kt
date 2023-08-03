@@ -24,9 +24,9 @@ class UserConverter(private val passwordEncoder: PasswordEncoder) : AbstractConv
 
     fun toResponse(domain: User): UserCreateResponse {
         return UserCreateResponse(
+            id = domain.id,
             name = domain.name,
             email = domain.email,
-            password = domain.password,
             userType = domain.type,
             status = AccountStatus.PENDING_APPROVAL,
             verified = domain.verified

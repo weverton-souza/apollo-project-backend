@@ -25,7 +25,7 @@ data class AccessToken(
     @Id
     @GeneratedValue
     @Column(name = "id", updatable = false)
-    override val id: UUID = UUID.randomUUID(),
+    override var id: UUID = UUID.randomUUID(),
 
     @Column(unique = true)
     val token: String,

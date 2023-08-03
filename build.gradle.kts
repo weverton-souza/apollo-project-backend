@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("jacoco")
     id("org.springframework.boot") version "3.0.9-SNAPSHOT"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
@@ -15,6 +16,10 @@ version = "0.0.1-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
+}
+
+jacoco {
+    toolVersion = "0.8.8"
 }
 
 configurations {
@@ -68,6 +73,8 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
 }
 
@@ -87,6 +94,7 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
+    dependsOn(tasks.ktlintFormat)
     useJUnitPlatform()
 }
 
@@ -110,4 +118,30 @@ tasks {
 
 configurations.all {
     exclude(mapOf("module" to "spring-boot-starter-logging"))
+}
+
+tasks.withType<Test>().configureEach {
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+    dependsOn("test")
+
+    reports {
+        xml.required.set(true)
+        csv.required.set(true)
+        html.required.set(true)
+    }
+}
+
+tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+    violationRules {
+        rule {
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.80".toBigDecimal()
+            }
+        }
+    }
 }

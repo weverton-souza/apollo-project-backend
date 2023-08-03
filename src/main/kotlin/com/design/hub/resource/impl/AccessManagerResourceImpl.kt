@@ -1,5 +1,6 @@
 package com.design.hub.resource.impl
 
+import com.design.hub.annotation.IsAdmin
 import com.design.hub.payload.security.request.RefreshTokenRequest
 import com.design.hub.payload.security.request.SigninRequest
 import com.design.hub.payload.security.response.JwtAuthenticationResponse
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+@IsAdmin
 @Validated
 @RestController
 @RequestMapping
